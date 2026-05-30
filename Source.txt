@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entropy: The Absolute Lifecycle Engine</title>
+    <style>
+        :root {
+            --glow-color: rgba(0, 255, 204, 0.15);
+            --text-accent: #00ffcc;
+            --bg-base: #020205;
+            --panel-border: rgba(255, 255, 255, 0.03);
+            --panel-bg: rgba(255, 255, 255, 0.01);
+            --text-main: #ffffff;
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: var(--bg-base); color: var(--text-main);
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            overflow: hidden;
+            transition: background-color 1s ease;
+        }
+
+        /* DIGITAL CRT SCANLINE ATMOSPHERE */
+        body::before {
+            content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 999; opacity: 0.6; pointer-events: none; background-size: 100% 4px, 6px 100%;
+        }
+
+        /* SINGULARITY OVERRIDE MASTER STATE */
+        body.singularity {
+            --glow-color: rgba(0, 0, 0, 0.05);
+            --text-accent: #000000;
+            --bg-base: #ffffff;
+            --panel-border: #000000;
+            --panel-bg: #ffffff;
+            --text-main: #000000;
+        }
+
+        .workspace {
+            display: flex; width: 1100px; height: 650px; gap: 25px;
+            transition: transform 0.5s cubic-bezier(0.1, 1, 0.1, 1);
+        }
+
+        .panel {
+            background: var(--panel-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--panel-border); border-radius: 20px; padding: 35px;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.7); display: flex; flex-direction: column;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        body.singularity .panel { border-width: 3px; border-radius: 0; box-shadow: 0 0 40px var(--glow-color); }
+
+        .left-pane { width: 35%; }
+        .right-pane { width: 65%; position: relative; }
+
+        h1 { font-size: 1.1rem; text-transform: uppercase; letter-spacing: 5px; margin: 0 0 5px 0; color: #8e8e93; transition: color 0.5s; }
+        body.singularity h1 { color: #000000; font-weight: 900; }
+        
+        .sub-track { font-size: 0.75rem; color: #48484a; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; }
+        body.singularity .sub-track { color: #48484a; font-weight: bold; }
+
+        /* CALENDAR MODULE GRAPHICS */
+        .calendar-box {
+            background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.03); border-radius: 14px;
+            padding: 20px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-around; gap: 10px;
+        }
+        body.singularity .calendar-box { border: 1px solid #000000; background: transparent; border-radius: 0; }
+        
+        .cal-metric { font-family: monospace; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; }
+        .cal-date-display { color: var(--text-accent); font-weight: bold; transition: color 0.5s; }
+
+        /* ENERGY SYSTEM MECHANICS */
+        .energy-track { width: 100%; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; margin-top: 5px; position: relative; }
+        body.singularity .energy-track { background: #e5e5ea; border: 1px solid #000000; border-radius: 0; }
+        .energy-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #ff3b30, #ff453a); transition: width 0.4s cubic-bezier(0.1, 0.8, 0.3, 1); }
+        body.singularity .energy-bar { background: #000000; }
+
+        /* LIVING HISTORIC LEDGER (JOURNAL RECORDER) */
+        .journal-log {
+            height: 90px; background: rgba(0,0,0,0.2); border-radius: 10px; border: 1px solid rgba(255,255,255,0.02);
+            padding: 12px; font-family: monospace; font-size: 0.75rem; color: #636366; overflow-y: auto; line-height: 1.4;
+        }
+        body.singularity .journal-log { background: #f2f2f7; border: 1px solid #000000; border-radius: 0; color: #000000; }
+
+        /* SHUFFLED TASK CARDS */
+        .task-list { display: flex; flex-direction: column; gap: 10px; overflow-y: auto; flex-grow: 1; padding-right: 5px; }
+        
+        .task-item {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.02);
+            padding: 16px; border-radius: 12px; cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        body.singularity .task-item { border: 1px solid #000000; border-radius: 0; background: transparent; }
+        .task-item:hover { background: rgba(255,255,255,0.03); transform: translateX(4px); border-color: rgba(255,255,255,0.1); }
+        body.singularity .task-item:hover { background: #f2f2f7; transform: none; }
+
+        .task-item.checked { opacity: 0.25; transform: scale(0.98); }
+        .task-item.checked .title { text-decoration: line-through; }
+        .task-item.checked .checkbox { background: var(--text-accent); border-color: var(--text-accent); }
+
+        .checkbox { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.15); border-radius: 4px; transition: all 0.2s; }
+        body.singularity .checkbox { border: 2px solid #000000; border-radius: 0; }
+
+        .cost-tag { font-size: 0.7rem; color: #ff453a; font-family: monospace; margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+        body.singularity .cost-tag { color: #000000; font-weight: bold; }
+
+        /* BUTTON DESIGN STANDARDS */
+        .sleep-btn {
+            background: var(--text-main); color: var(--bg-base); border: none; padding: 15px;
+            border-radius: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px;
+            font-size: 0.75rem; cursor: pointer; margin-top: 20px; transition: all 0.2s ease;
+        }
+        body.singularity .sleep-btn { border: 2px solid #000000; font-weight: 900; border-radius: 0; }
+        .sleep-btn:hover { opacity: 0.85; box-shadow: 0 0 15px var(--glow-color); }
+
+        /* NARRATIVE POPUP COGNITIVE OVERLAYS */
+        .overlay-card {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #030307; border-radius: 20px; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; padding: 45px; box-sizing: border-box;
+            text-align: center; z-index: 100; opacity: 0; visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        body.singularity .overlay-card { background: #ffffff; border-radius: 0; }
+        .overlay-card.active { opacity: 1; visibility: visible; }
+        .overlay-card p { color: #8e8e93; margin-bottom: 30px; font-size: 0.95rem; line-height: 1.6; max-width: 80%; }
+        body.singularity .overlay-card p { color: #000000; font-weight: 500; }
+
+        .choice-actions { display: flex; gap: 12px; width: 100%; max-width: 80%; }
+        .choice-btn {
+            flex: 1; padding: 12px; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.01); color: white; border-radius: 8px;
+            cursor: pointer; font-weight: 500; font-size: 0.85rem; transition: all 0.2s;
+        }
+        body.singularity .choice-btn { border: 2px solid #000000; color: #000000; font-weight: 900; border-radius: 0; }
+        .choice-btn:hover { background: rgba(255,255,255,0.05); border-color: var(--text-accent); }
+        body.singularity .choice-btn:hover { background: #f2f2f7; }
+
+        input[type="date"] {
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08);
+            padding: 14px; border-radius: 8px; color: #fff; font-size: 1rem; outline: none;
+            text-align: center; width: 100%; box-sizing: border-box; margin-bottom: 15px;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- CARD 1: BIO PARAMETERS INTRO FRAME -->
+    <div class="panel" id="setup-view" style="width: 400px; text-align: center;">
+        <h1>Sync Identity</h1>
+        <div class="sub-track">Temporal Configuration Step</div>
+        <input type="date" id="birth-input" required>
+        <button class="sleep-btn" style="width:100%;" onclick="launchMasterEngine()">Initialize System Architecture</button>
+    </div>
+
+    <!-- CARD 2: RE-ARCHITECTED SPLIT-DASHBOARD CORE workspace -->
+    <div class="workspace hidden" id="core-workspace">
+        
+        <!-- PANE: TELEMETRY & RUNTIME CHRONO LOGIC -->
+        <div class="panel left-pane">
+            <h1>Chronometry</h1>
+            <div class="sub-track">Lifecycle Horizon Matrix</div>
+            
+            <div class="calendar-box">
+                <div class="cal-metric"><span>System Limits:</span><span style="color:#ff3b30; font-weight:bold;">2 Years Fixed</span></div>
+                <div class="cal-metric"><span>Timeline Frame:</span><span id="cal-date" class="cal-date-display">Syncing...</span></div>
+                <div class="cal-metric"><span>Chronological Drift:</span><span id="cal-countdown" style="font-weight:bold;">Day 0 / 730</span></div>
+                <div style="margin-top: 10px;">
+                    <div class="cal-metric"><span id="energy-text">Willpower Reserves</span><span id="energy-num" style="font-weight:bold;">100%</span></div>
+                    <div class="energy-track"><div class="energy-bar" id="energy-fill"></div></div>
+                </div>
+            </div>
+
+            <h1 style="font-size:0.75rem; margin:15px 0 5px 0;">Historian Ledger</h1>
+            <div class="journal-log" id="journal-box">System online. Parameters pending computation cycles...</div>
+
+            <button class="sleep-btn" onclick="executeNextDayCycle()">Initiate Sleep Matrix</button>
+        </div>
+
+        <!-- PANE: REFRESHING DYNAMIC REGISTRY BOARD -->
+        <div class="panel right-pane">
+            <h1>Dynamic Task Board</h1>
+            <div class="sub-track" id="yesterday-report">Prior iteration: Zero tasks processed</div>
+            
+            <div class="task-list" id="task-injector">
+                <!-- Javascript maps real-time changing lists here -->
+            </div>
+
+            <!-- IMMERSIVE OVERLAY CARD PORTAL -->
+            <div class="overlay-card" id="overlay-layer">
+                <h1 id="overlay-title">Anomaly Detected</h1>
+                <p id="overlay-desc">System demands vector routing execution protocols.</p>
+                <div class="choice-actions" id="overlay-btns"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let state = {
+            birthdate: null,
+            daysPassed: 0,
+            energy: 100,
+            birthdayStateActive: false,
+            // Track logs and choices
+            metrics: { intellect: 0, vitality: 0, romance: 0, social: 0 },
+            gymStreak: 0,
+            hasGirlfriend: false,
+            girlName: "Elena",
+            yesterdayCompleted: 0,
+            activeTasksToday: [],
+            
+            masterPool: [
+                { text: "Wake up early at 0500 hours to write code", cost: 12, type: "vitality" },
+                { text: "Execute high-density heavy resistance training [Gym]", cost: 25, type: "gym" },
+                { text: "Process advanced machine learning scripts", cost: 35, type: "intellect" },
+                { text: "Prepare organic clean macro nutrition", cost: 10, type: "vitality" },
+                { text: "Analyze historical macroeconomics documents", cost: 20, type: "intellect" },
+                { text: "Refactor architecture workspace directory layouts", cost: 8, type: "vitality" },
+                { text: "Execute meditation protocols for memory protection", cost: 10, type: "intellect" }
+            ]
+        };
+
+        function launchMasterEngine() {
+            const rawIn = document.getElementById("birth-input").value;
+            if (!rawIn) return alert("Temporal coordinates unassigned.");
+            
+            state.birthdate = new Date(rawIn);
+            document.getElementById("setup-view").classList.add("hidden");
+            document.getElementById("core-workspace").classList.remove("hidden");
+            
+            logToLedger("Chronos core initiated. Lifespan compressed to 730 intervals.");
+            generateDynamicDailyDeck();
+            recalculateDayIntervals();
+        }
+
+        function logToLedger(text) {
+            const box = document.getElementById("journal-box");
+            box.innerHTML = `&gt; ${text}<br>${box.innerHTML}`;
+        }
+
+        function generateDynamicDailyDeck() {
+            // Fisher-Yates array shuffling mechanics
+            let deck = [...state.masterPool];
+            if (state.hasGirlfriend) {
+                // Instantly swap a standard task out with a dedicated romantic date vector task card
+                deck.push({ text: `Execute shared tracking run with ${state.girlName}`, cost: 20, type: "romance" });
+            }
+
+            for (let i = deck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [deck[i], deck[j]] = [deck[j], deck[i]];
+            }
+            state.activeTasksToday = deck.slice(0, 4).map(t => ({...t, checked: false}));
+        }
+
+        function recalculateDayIntervals() {
+            if (state.daysPassed >= 730) {
+                triggerEndGameEpilogue();
+                return;
+            }
+
+            let simDate = new Date();
+            simDate.setDate(simDate.getDate() + state.daysPassed);
+            
+            state.birthdayStateActive = (simDate.getMonth() === state.birthdate.getMonth() && simDate.getDate() === state.birthdate.getDate());
+
+            if (state.birthdayStateActive) {
+                state.energy = Infinity;
+                document.body.className = "singularity";
+                document.getElementById("energy-text").innerText = "Singularity Factor Active";
+                document.getElementById("cal-date").innerText = "BIRTHDAY CLARITY OVERRIDE";
+                logToLedger("Temporal singularity detected. Cognitive strain reduced to 0.");
+            } else {
+                document.body.className = "";
+                document.getElementById("energy-text").innerText = "Willpower Reserves";
+                
+                let formatting = { year: 'numeric', month: 'short', day: 'numeric' };
+                document.getElementById("cal-date").innerText = simDate.toLocaleDateString('en-US', formatting);
+                
+                // Pure exponential decline math formula over 2 years (730 steps)
+                let scaleRatio = state.daysPassed / 730;
+                let decayCeiling = 100 * Math.pow(Math.E, -1.9 * scaleRatio);
+                let fluctuationMod = (Math.random() * 24) - 12; // Modulates +/- 12% random variance daily
+                
+                state.energy = Math.max(5, Math.min(decayCeiling + fluctuationMod, 100));
+            }
+
+            document.getElementById("cal-countdown").innerText = `Day ${state.daysPassed} / 730`;
+            evaluateNarrativeIncidentQueues();
+        }
+
+        function evaluateNarrativeIncidentQueues() {
+            // Milestone conditional gate check: Hitting gym 5 times unlocks romance path
+            if (state.gymStreak >= 5 && !state.hasGirlfriend && !state.birthdayStateActive) {
+                state.hasGirlfriend = true;
+                displayOverlayPortal({
+                    title: "SECRET EVENT COMPLETE: Track Sync",
+                    desc: "Your consistent commitment to physiological asset protection [Gym completed 5 times] triggered a track variable alignment. A girl named Elena adjustments her pace vector to match yours, suggesting a unified running routine.",
+                    options: [
+                        { text: "Accept Association Matrix (-15 Energy)", cost: 15, run: () => { state.metrics.romance += 10; logToLedger("Elena added to personal lifecycle ledger."); } },
+                        { text: "Decline. Protect Isolated Production (+0)", cost: 0, run: () => { logToLedger("Romance path intentionally terminated."); } }
+                    ]
+                });
+                return;
+            }
+
+            // High Stakes emergency incident chance (15% chance per sleep switch)
+            if (Math.random() < 0.15 && state.daysPassed > 0 && !state.birthdayStateActive) {
+                displayOverlayPortal({
+                    title: "CRITICAL ALERT: Medical Facility Transit",
+                    desc: "An individual collapsed near your tracking parameter coordinates. Transporting them immediately to the nearest healthcare hospital center will systematically consume your day's absolute capacity limits.",
+                    options: [
+                        { text: "Execute Transit Assistance (-55 Energy)", cost: 55, run: () => { state.metrics.social += 8; logToLedger("High energy sacrificed to rescue local entity."); } },
+                        { text: "Bypass Incident. Conserve Internal Voltage (+0)", cost: 0, run: () => { state.metrics.social -= 4; logToLedger("Altruistic bypass logged. Energy shielded."); } }
+                    ]
+                });
+                return;
+            }
+
+            updateDOMRegistry();
+        }
+
+        function updateDOMRegistry() {
+            const numText = document.getElementById("energy-num");
+            const energyFill = document.getElementById("energy-fill");
+            
+            if (state.birthdayStateActive) {
+                numText.innerText = "INFINITY";
+                energyFill.style.width = "100%";
+            } else {
+                let currentScaleMax = 100 * Math.pow(Math.E, -1.9 * (state.daysPassed / 730));
+                numText.innerText = `${Math.round(state.energy)}% [System Ceiling: ${Math.round(currentScaleMax)}%]`;
+                energyFill.style.width = `${state.energy}%`;
+            }
+
+            const injector = document.getElementById("task-injector");
+            injector.innerHTML = "";
+
+            state.activeTasksToday.forEach((task, idx) => {
+                let costCalculation = state.birthdayStateActive ? 0 : task.cost;
+                let card = document.createElement("div");
+                card.className = `task-item ${task.checked ? 'checked' : ''}`;
+                card.onclick = () => performTaskCommitment(idx);
+                card.innerHTML = `
+                    <div>
+                        <div class="title">${task.text}</div>
+                        <div class="cost-tag">-${costCalculation} Energy // Channel: ${task.type.toUpperCase()}</div>
+                    </div>
+                    <div class="checkbox"></div>
+                `;
+                injector.appendChild(card);
+            });
+        }
+
+        function performTaskCommitment(index) {
+            let item = state.activeTasksToday[index];
+            if (!item || item.checked) return;
+
+            let trueCost = state.birthdayStateActive ? 0 : item.cost;
+            if (state.energy < trueCost) return alert("System Crash: Insufficient willpower to complete calculations.");
+
+            state.energy -= trueCost;
+            item.checked = true;
+            
+            // Score tracking telemetry configuration updates
+            if (item.type === "gym") {
+                state.gymStreak++;
+                state.metrics.vitality += 3;
+                logToLedger(`Gym milestone logged [Total: ${state.gymStreak}]`);
+            } else {
+                state.metrics[item.type] += 2;
+                logToLedger(`Executed variable task route: ${item.type.toUpperCase()}`);
+            }
+
+            updateDOMRegistry();
+        }
+
+        function displayOverlayPortal(configObj) {
+            const overlay = document.getElementById("overlay-layer");
+            document.getElementById("overlay-title").innerText = configObj.title;
+            document.getElementById("overlay-desc").innerText = configObj.desc;
+            
+            const actionDock = document.getElementById("overlay-btns");
+            actionDock.innerHTML = "";
+
+            configObj.options.forEach(opt => {
+                let btn = document.createElement("button");
+                btn.className = "choice-btn";
+                btn.innerText = opt.text;
+                btn.onclick = () => {
+                    if (state.energy < opt.cost) return alert("Action Cancelled: Operational voltage too weak.");
+                    state.energy -= opt.cost;
+                    opt.run();
+                    overlay.classList.remove("active");
+                    updateDOMRegistry();
+                };
+                actionDock.appendChild(btn);
+            });
+
+            overlay.classList.add("active");
+        }
+
+        function executeNextDayCycle() {
+            let processedTodayCount = state.activeTasksToday.filter(t => t.checked).length;
+            document.getElementById("yesterday-report").innerText = `Prior iteration: Processed [ ${processedTodayCount} / ${state.activeTasksToday.length} ] vectors successfully`;
+
+            state.daysPassed += 40; // Warp forward 40 days per click to make navigating the 2 years satisfying
+            generateDynamicDailyDeck();
+            recalculateDayIntervals();
+        }
+
+        function triggerEndGameEpilogue() {
+            const overlay = document.getElementById("overlay-layer");
+            document.getElementById("overlay-btns").innerHTML = "";
+            document.getElementById("overlay-title").innerText = "Timeline Matrix Concluded";
+            
+            let conclusionManifesto = "";
+            let data = state.metrics;
+
+            if (state.hasGirlfriend && data.romance >= 10 && data.vitality >= 10) {
+                conclusionManifesto = `THE SATURATION ENDING: Elite Lifestyle Balance. Maintaining extreme physical asset protection unlocked the running alignment incident path. You terminated the 2-year horizontal breakdown matrix with superb health indexes and ${state.girlName} standing beside you to brave the final collapse.`;
+            } else if (data.intellect > data.vitality && data.intellect > 12) {
+                conclusionManifesto = "THE CAPITALIST ENDING: Hyper Cognitive Specialization. Your constant isolation blocks processing data loops resulted in a top-tier quantitative technical algorithm role. However, systemic physical asset degradation occurred due to a lack of cardiovascular mechanics.";
+            } else if (data.social > data.intellect) {
+                conclusionManifesto = "THE GUARDIAN ENDING: Altruistic Vector Shield. By dedicating structural capacity to severe localized crisis instances (the Medical Facility Rescue), you constructed a fortress network of human connections who protect you during the shutdown.";
+            } else {
+                conclusionManifesto = "THE BURNOUT ENDING: Systemic Stagnation. Energy tracking loops bled out into friction nodes early. You reached the 730-day boundary wall with baseline unoptimized statistics and minimal data returns.";
+            }
+
+            document.getElementById("overlay-desc").innerText = conclusionManifesto;
+            overlay.classList.add("active");
+        }
+    </script>
+</body>
+</html>

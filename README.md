@@ -9,7 +9,7 @@ Built using a cinematic, cyber-retro CRT design language, the engine runs withou
 🌐 Live Demo
 
 Experience the live, interactive simulation instantly in your browser:
-👉 **[LAUNCH THE ENTROPY ENGINE LIVE](https://YOUR_GITHUB_USERNAME.github.io/YOUR_REPOSITORY_NAME/)**
+👉 **[LAUNCH THE ENTROPY ENGINE LIVE](https://alpha-cmd21.github.io/Entropy-The-Exhaustion-Engine/)**
 
 ## 🕹️ System Architecture & Mechanics
 
